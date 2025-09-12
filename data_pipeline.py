@@ -83,7 +83,40 @@ def load_csv(path: Path) -> pd.DataFrame | None:
         return None
     return df
 
+# Fetch, validate, save CSV (if not cached), and return DataFrame with metadata
+def get_data(ticker: str, start: str = "2018-01-01", end: str | None = None, interval: str = "1d", auto_adjust: bool = True, use_cache: bool = True) -> Dict[str, Any]:
+    key = cache_key(ticker, start, end, interval, auto_adjust)
+    path = _csv_path(ticker, key)
+
+    if use_cache:
+        cached = load_csv(path)
+        if cached is not None:
+            return {
+                "ticker": ticker,
+                "df": cached,
+                "csv_path": str(path),
+                "key": key,
+                "source" : "cache_csv",
+                "params" : dict(ticker=ticker, start=start, end=end, interval=interval, auto_adjust=auto_adjust),
+            }
+
+    df = fetch_ohlcv(ticker, start, end, interval, auto_adjust)
+    save_csv(df, path)
+
+    return {
+        "ticker": ticker,
+        "df": df,
+        "csv_path": str(path),
+        "key": key,
+        "source" : "fresh_download",
+        "params" : dict(ticker=ticker, start=start, end=end, interval=interval, auto_adjust=auto_adjust),
+    }
+
 if __name__ == "__main__":
-    df = fetch_ohlcv("AAPL", "2020-01-01", "2023-01-01")
-    print(df.head())
-    print("rows:", len(df))
+    info = get_data("AAPL", start="2022-01-01", end="2023-01-01",
+                    interval="1d", auto_adjust=True, use_cache=True)
+    df = info["df"]
+    assert not df.empty
+    assert df.index.is_monotonic_increasing
+    assert (df[["Open", "High", "Low", "Close"]] > 0).all().all()
+    print("OK:", info["source"], "| rows:", len(df), "| csv:", info["csv_path"])
