@@ -1,6 +1,8 @@
 import yfinance as yf
 from pathlib import Path
 import pandas as pd
+import hashlib
+from typing import Optional, Dict, Any
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True) 
@@ -58,6 +60,27 @@ def fetch_ohlcv(ticker: str, start: str, end: str | None = None,
     if bad.any():
         df = df[~bad]
     
+    return df
+
+def cache_key(ticker: str, start: str, end: Optional[str], interval: str, auto_adjust: bool) -> str:
+    end = end or ""
+    blob = f"{ticker}|{start}|{end}|{interval}|{auto_adjust}"
+    return hashlib.sha256(blob.encode()).hexdigest()[:10]
+
+def _csv_path(ticker: str, key: str) -> Path:
+    safe = ticker.replace("/", "_").replace(" ", "_")
+    return DATA_DIR / f"{safe}_{key}.csv"
+
+def save_csv(df: pd.DataFrame, path: Path) -> Path:
+    df.to_csv(path)
+    return path
+
+def load_csv(path: Path) -> pd.DataFrame | None:
+    if not path.exists():
+        return None
+    df = pd.read_csv(path, index_col=0, parse_dates=True)
+    if df.empty or "Close" not in df.columns:
+        return None
     return df
 
 if __name__ == "__main__":
