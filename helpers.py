@@ -9,3 +9,9 @@ def select_price(df: pd.DataFrame) -> pd.Series:
 
 def pct_returns(price: pd.Series) -> pd.Series:
     return price.pct_change().fillna(0.0)
+
+def max_drawdown(equity):
+    # Calculate max drawdown given an equity curve
+    roll_max = equity.cummax()
+    drawdown = equity / roll_max - 1.0
+    return float(drawdown.min())
