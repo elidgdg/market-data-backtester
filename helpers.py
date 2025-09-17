@@ -8,4 +8,4 @@ def select_price(df: pd.DataFrame) -> pd.Series:
     return df['Adj Close'] if 'Adj Close' in df.columns else df['Close']
 
 def pct_returns(price: pd.Series) -> pd.Series:
-    return price.pct_change()
+    return price.pct_change().fillna(0)
