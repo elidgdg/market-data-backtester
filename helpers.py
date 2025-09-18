@@ -15,3 +15,22 @@ def max_drawdown(equity):
     roll_max = equity.cummax()
     drawdown = equity / roll_max - 1.0
     return float(drawdown.min())
+
+def metrics(returns: pd.Series) -> dict:
+    # Cumulative return, annualized vol, sharpe, max drawdown
+    mean = returns.mean()
+    std = returns.std() # daily return std dev
+    ann_ret = mean * TRADING_DAYS
+    ann_vol = std * np.sqrt(TRADING_DAYS)
+    sharpe = (ann_ret / ann_vol) if ann_vol > 0 else np.nan
+
+    cum_ret = (1 + returns).prod() - 1
+    eq = (1 + returns).cumprod()
+    mdd = max_drawdown(eq)
+
+    return {
+        "cum_ret" : float(cum_ret),
+        "ann_vol" : float(ann_vol),
+        "sharpe"  : float(sharpe),
+        "max_dd"  : float(mdd)
+    }
