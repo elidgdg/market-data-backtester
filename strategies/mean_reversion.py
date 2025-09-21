@@ -18,7 +18,7 @@ def mean_reversion(price: pd.Series,
     # stay flat until enough data
     z_valid = ~(sma.isna() | vol.isna())
 
-    sig = pd.series(0.0, index=price.index, dtype=float)
+    sig = pd.Series(0.0, index=price.index, dtype=float)
     in_pos = False
     for t in range(len(price)):
         if not z_valid.iat[t]:
