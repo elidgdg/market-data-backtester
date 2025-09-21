@@ -2,6 +2,7 @@ from data_pipeline import get_data
 from helpers import select_price, metrics, pretty_print_metrics
 from strategies.ma import moving_average_crossover
 from strategies.momentum import momentum_threshold
+from strategies.mean_reversion import mean_reversion
 from backtester import backtest
 
 def run_compare(
@@ -32,10 +33,16 @@ def run_compare(
     res_mo = backtest(price, sig_mo, fee_bps=fee_bps)
     met_mo = metrics(res_mo['strat_ret'])
 
+    # Mean Reversion strategy
+    sig_mr = mean_reversion(price, lookback=20, z_enter=-1.0, z_exit=0.0)
+    res_mr = backtest(price, sig_mr, fee_bps=fee_bps)
+    met_mr = metrics(res_mr['strat_ret'])
+
     print(f"\n=== {ticker} {start}->{end} | fee={fee_bps} bps ===")
     print(f"Buy&Hold : {pretty_print_metrics(met_bh)}")
     print(f"MA({ma_short},{ma_long}) : {pretty_print_metrics(met_ma)}")
     print(f"Momentum(LB={mom_lookback}, thr={mom_threshold:.2f}) : {pretty_print_metrics(met_mo)}")
+    print(f"MeanRev(LB=20, z_enter=-1.0, z_exit=0.0) : {pretty_print_metrics(met_mr)}")
 
 if __name__ == "__main__":
     run_compare()
