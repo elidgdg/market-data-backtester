@@ -34,3 +34,13 @@ def metrics(returns: pd.Series) -> dict:
         "sharpe"  : float(sharpe),
         "max_dd"  : float(mdd)
     }
+
+def pretty_print_metrics(m: dict) -> dict:
+    # print returns/vol/dd as percentages, sharpe as is
+    out = {}
+    for k,v in m.items():
+        if k in ("cum_ret", "ann_vol", "max_dd"):
+            out[k] = round(v * 100, 2)
+        else:
+            out[k] = round(v, 3)
+    return out
