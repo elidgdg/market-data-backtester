@@ -4,17 +4,16 @@ from strategies.ma import moving_average_crossover
 from strategies.momentum import momentum_threshold
 from strategies.mean_reversion import mean_reversion
 from backtester import backtest
-from plots import plot_equity_curves
+from plots import plot_equity_curves, plot_mean_reversion_signals
 
 def run_compare(
         ticker="AAPL",
         start="2019-01-01",
         end="2024-12-31",
         fee_bps=10.0,
-        ma_short=20,
-        ma_long=50,
-        mom_lookback=60,
-        mom_threshold=0.05,
+        ma_short=20, ma_long=50,
+        mom_lookback=60, mom_threshold=0.05,
+        mr_lookback=20, mr_enter=-1.0, mr_exit=0.0
 ):
     # load data
     info = get_data(ticker, start=start, end=end, interval="1d", auto_adjust=True)
@@ -45,8 +44,9 @@ def run_compare(
     print(f"Momentum(LB={mom_lookback}, thr={mom_threshold:.2f}) : {pretty_print_metrics(met_mo)}")
     print(f"MeanRev(LB=20, z_enter=-1.0, z_exit=0.0) : {pretty_print_metrics(met_mr)}")
 
-    # Plot equity curves
+    # Plots
     plot_equity_curves(res_ma['eq_strat'], res_ma['eq_bh'], title=f"{ticker} Equity Curves (fee={fee_bps} bps)")
+    plot_mean_reversion_signals(price, mr_lookback, mr_enter, mr_exit, sig_mr, title=f"{ticker} Mean Reversion Signals")
 
 if __name__ == "__main__":
     run_compare()
