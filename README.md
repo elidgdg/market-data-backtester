@@ -55,7 +55,7 @@ venv\Scripts\activate       # on Windows
 pip install -r requirements.txt
 ```
 
-### Run a demo
+### 2. Run a demo
 ```bash
 python main.py
 ```
