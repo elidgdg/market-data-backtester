@@ -4,6 +4,7 @@ from strategies.ma import moving_average_crossover
 from strategies.momentum import momentum_threshold
 from strategies.mean_reversion import mean_reversion
 from backtester import backtest
+from plots import plot_equity_curves
 
 def run_compare(
         ticker="AAPL",
@@ -43,6 +44,9 @@ def run_compare(
     print(f"MA({ma_short},{ma_long}) : {pretty_print_metrics(met_ma)}")
     print(f"Momentum(LB={mom_lookback}, thr={mom_threshold:.2f}) : {pretty_print_metrics(met_mo)}")
     print(f"MeanRev(LB=20, z_enter=-1.0, z_exit=0.0) : {pretty_print_metrics(met_mr)}")
+
+    # Plot equity curves
+    plot_equity_curves(res_ma['eq_strat'], res_ma['eq_bh'], title=f"{ticker} Equity Curves (fee={fee_bps} bps)")
 
 if __name__ == "__main__":
     run_compare()
