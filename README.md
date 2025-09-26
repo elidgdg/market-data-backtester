@@ -36,3 +36,43 @@ MA(20,50) : {'cum_ret': 184.89, 'ann_vol': 21.77, 'sharpe': 0.912, 'max_dd': -29
 Momentum(LB=60, thr=0.05) : {'cum_ret': 84.07, 'ann_vol': 20.46, 'sharpe': 0.6, 'max_dd': -28.49}
 MeanRev(LB=20, z_enter=-1.0, z_exit=0.0) : {'cum_ret': -9.45, 'ann_vol': 20.91, 'sharpe': 0.025, 'max_dd': -28.47}
 ```
+
+![Equity Curves](docs/aapl_equity.png)
+*Equity curve: Strategy vs Buy & Hold on AAPL (2019-2024)*
+
+![Mean Reversion Signals](docs/aapl_meanrev.png)
+*Mean reversion trades on AAPL with SMA ±σ bands (green ▲ = buy, red ▼ = exit)*
+
+## Quick Start
+
+### 1. Clone and set up
+```bash
+git clone https://github.com/elidgdg/market-data-backtester.git
+cd market-data-backtester
+python -m venv venv
+source venv/bin/activate    # on Mac/Linux
+venv\Scripts\activate       # on Windows
+pip install -r requirements.txt
+```
+
+### Run a demo
+```bash
+python main.py
+```
+This will:
+- Download historical prices for AAPL
+- Run strategies (Buy & Hold, MA crossover, Momentum, Mean Reversion)
+- Print performance metrics
+- Save plots into `reports/`
+
+## Tech Stack
+- **Python**
+- **pandas, NumPy** &rarr; time-series manipulation
+- **yfinance** &rarr; market data
+- **matplotlib** &rarr; reporting/plots
+
+## Future Extensions
+- Portfolio of multiple tickers
+- Monte Carlo simulations of return paths
+- Flask dashboard for interactive strategy testing
+- Plugging in ML models
