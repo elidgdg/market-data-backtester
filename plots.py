@@ -46,15 +46,20 @@ def plot_mean_reversion_signals(price: pd.Series,
 
     plt.figure(figsize=(12, 6))
     price.plot(label="Price")
-    sma.plot(label=f"SMA({lookback})")
-    upper.plot(label=f"Upper Band (+1 STD)", linestyle="--", linewidth=1)
-    lower.plot(label=f"Lower Band (-1 STD)", linestyle="--", linewidth=1)
+    sma.plot(label=f"SMA({lookback})", color="orange", linewidth=2)
+    upper.plot(label=f"Upper Band (+1 STD)", color="green", linestyle="--", linewidth=1)
+    lower.plot(label=f"Lower Band (-1 STD)", color="red", linestyle="--", linewidth=1)
 
     # entry/exit markers
     if len(entries) > 0:
-        plt.scatter(entries, price.loc[entries], marker="^", s=60, label="Enter (buy)")
+        plt.scatter(entries, price.loc[entries], marker="^", s=100, label="Enter (buy)")
     if len(exits) > 0:
-        plt.scatter(exits, price.loc[exits], marker="v", s=60, label="Exit (flat)")
+        plt.scatter(exits, price.loc[exits], marker="v", s=100, label="Exit (flat)")
+
+    in_pos = signal == 1
+    plt.fill_between(price.index, price.min(), price.max(), where=in_pos, 
+                 color="green", alpha=0.1, label="In position")
+
 
     plt.title(title or f"Mean Reversion Signals (LB={lookback}, enter={z_enter}, exit={z_exit}")
     plt.ylabel("Price")
